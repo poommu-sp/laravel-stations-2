@@ -15,7 +15,7 @@ class MovieFactory extends Factory
     {
         return [
             'title' => $this->faker->unique()->word,
-            'image_url' => $this->faker->imageUrl(),
+            'image_url' => $this->faker->imageUrl(640, 480, 'animals', true),
             'published_year' => $this->faker->year,
             'description' => $this->faker->realText(20),
             'is_showing' => $this->faker->boolean,

@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PracticeController;
+use App\Http\Controllers\MovieController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +19,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/practice', [PracticeController::class, 'sample']);
+Route::get('/practice2', [PracticeController::class, 'sample2']);
+Route::get('/practice3', [PracticeController::class, 'sample3']);
+Route::get('/getPractice', [PracticeController::class, 'getPractice']);
+
+Route::get('/movies', [MovieController::class, 'getMovie'])->name('search');
+Route::get('/admin/movies',[MovieController::class, 'getAdminMovie'])->name('admin.list');
+Route::get('/admin/movies/create',[MovieController::class, 'adminMovieCreate']);
+Route::post('/admin/movies/store', [MovieController::class, 'adminMovieSave'])->name('store');
+Route::get('/admin/movies/{id}/edit', [MovieController::class, 'adminEditMovie'])->name('edit');
+Route::patch('/admin/movies/{id}/update', [MovieController::class, 'adminMovieUpdate'])->name('update');
+Route::delete('/admin/movies/{id}/destroy', [MovieController::class, 'adminMovieDelete'])->name('delete');
+
