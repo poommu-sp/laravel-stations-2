@@ -11,6 +11,7 @@ use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AuthenticationTest extends TestCase
 {
@@ -64,9 +65,7 @@ class AuthenticationTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider unAuthenticatedRouteProvider
-     */
+    #[DataProvider('unAuthenticatedRouteProvider')]
     public function test非ログイン時に認証が必要なページがアクセス制限され_loginページにリダイレクトされる(string $route): void
     {
         // プレースホルダーを実際の値に置換
@@ -76,7 +75,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function unAuthenticatedRouteProvider(): array
+    public static function unAuthenticatedRouteProvider(): array
     {
         return [
             '映画一覧ページ' => ['/movies'],
@@ -87,9 +86,7 @@ class AuthenticationTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider unAuthenticatedPostRouteProvider
-     */
+    #[DataProvider('unAuthenticatedPostRouteProvider')]
     public function test非ログイン時に認証が必要なPOSTリクエストがアクセス制限され_loginページにリダイレクトされる(string $route, array $params): void
     {
         // プレースホルダーを実際の値に置換
@@ -102,7 +99,7 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function unAuthenticatedPostRouteProvider(): array
+    public static function unAuthenticatedPostRouteProvider(): array
     {
         return [
             '予約保存処理' => [

@@ -10,6 +10,7 @@ use App\Models\Sheet;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ScreenTest extends TestCase
 {
@@ -145,9 +146,7 @@ class ScreenTest extends TestCase
         ]);
     }
 
-    /**
-     * @dataProvider reservationPatternProvider
-     */
+    #[DataProvider('reservationPatternProvider')]
     public function test座席予約が実行できる(
         array $schedule1Data,
         array $schedule2Data,
@@ -181,7 +180,7 @@ class ScreenTest extends TestCase
         }
     }
 
-    public function reservationPatternProvider(): array
+    public static function reservationPatternProvider(): array
     {
         $users_data = [
             [
