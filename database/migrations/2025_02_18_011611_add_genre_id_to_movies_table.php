@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('movies', function (Blueprint $table) {
             $table->unsignedBigInteger('genre_id');
             $table->foreign('genre_id')->references('id')->on('genres');
-            // $table->foreignId('genre_id')->nullable()->constrained('genres');
         });
     }
 

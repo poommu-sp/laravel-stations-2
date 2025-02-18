@@ -7,7 +7,6 @@ use App\Models\Movie;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class MovieController extends Controller
 {
@@ -53,7 +52,7 @@ class MovieController extends Controller
         $validated = $request->validate([
             'title' => 'required|unique:movies,title',
             'image_url' => 'required|url',
-            'published_year' => 'required|integer',
+            'published_year' => 'required|integer|min:1900|max:' . date('Y'),
             'description' => 'required|string',
             'is_showing' => 'required|nullable|boolean',
             'genre' => 'required|string',
@@ -71,6 +70,7 @@ class MovieController extends Controller
         try {
             // create or update genre if exists
             $genre = Genre::firstOrCreate(['name' => $validated['genre']]);
+            dd($genre);
             // add fk to model
             $movie->genre_id = $genre->id;
             // save
@@ -95,7 +95,7 @@ class MovieController extends Controller
         $validated = $request->validate([
             'title' => 'required|unique:movies,title,' . $movie->id,
             'image_url' => 'required|url',
-            'published_year' => 'required|integer',
+            'published_year' => 'required|integer|min:1900|max:' . date('Y'),
             'description' => 'required|string',
             'is_showing' => 'required|nullable|boolean',
             'genre' => 'required|string',
@@ -106,9 +106,6 @@ class MovieController extends Controller
             // genre part
             // create or update genre if exists
             $genre = Genre::firstOrCreate(['name' => $validated['genre']]);
-            Log::info($genre);
-            Log::info($request);
-
             // update movie
             $movie->update([
                 'title' =>  $validated['title'],
@@ -119,7 +116,6 @@ class MovieController extends Controller
                 // add fk to model
                 'genre_id' => $genre->id,
             ]);
-
             DB::commit();
             return redirect()->route('edit', $movie->id)->with('success', '更新しました');
         } catch (Exception $exception) {

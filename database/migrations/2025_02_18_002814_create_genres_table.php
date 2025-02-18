@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('genres', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique()->comment('ジャンル名');
+            $table->string('name',255)->unique()->comment('ジャンル名');
             $table->timestamps();
         });
     }
@@ -23,6 +23,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // clear fk before drop
+        Schema::table('movies', function (Blueprint $table) {
+            $table->dropForeign(['genre_id']);
+            $table->dropColumn('genre_id');
+        });
         Schema::dropIfExists('genres');
     }
 };

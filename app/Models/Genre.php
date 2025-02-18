@@ -9,13 +9,6 @@ class Genre extends Model
 {
     use HasFactory;
 
-    protected $guarded = [
-        'id',
-    ];
+    protected $fillable = ['name']; 
 
-    // for m-to-m condition
-    public function movies()
-    {
-        return $this->hasMany(Movie::class);
-    }
 }
