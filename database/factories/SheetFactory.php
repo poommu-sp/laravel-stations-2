@@ -13,8 +13,20 @@ class SheetFactory extends Factory
      */
     public function definition()
     {
+        static $currentSeatNumber = 0;
+
+        $availableRows = ['a', 'b', 'c'];
+
+        // cal seat column (1 to 5)
+        $seatColumn = ($currentSeatNumber % 5) + 1;
+        // cal loop for get index of availableRows (a to c)
+        $rowIndex = intdiv($currentSeatNumber, 5) % count($availableRows);
+
+        $currentSeatNumber++;
+
         return [
-            //
+            'row' => $availableRows[$rowIndex], 
+            'column' => $seatColumn, 
         ];
     }
 }

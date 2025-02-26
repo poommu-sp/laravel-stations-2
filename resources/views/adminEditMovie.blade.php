@@ -22,9 +22,9 @@
         </div>
     @endif
 
-    <form method="post" action="{{ route('update', $movie->id) }}">
+    <h1>映画編集</h1>
+    <form method="patch" action="{{ route('admin.update.movie', $movie->id) }}">
         @csrf
-        @method('patch')
         <div>
             <label for="title">映画タイトル : </label>
             <input type="text" id="title" name="title" value="{{ old('title', $movie->title) }}" /><br>
@@ -41,7 +41,8 @@
             <textarea id="description" name="description"> {{ old('description', $movie->description) }} </textarea><br>
             <label for="genre">ジャンル : </label>
             <input type="text" id="genre" name="genre" value="{{ old('genre', $movie->genre->name) }}"/><br>
-            <button type="submit">Update</button>
+            <button type="submit">更新</button>
         </div>
     </form>
+    <a href="{{ url()->previous() }}">戻る</a>
 </body>

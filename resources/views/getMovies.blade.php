@@ -10,7 +10,7 @@
 
 <body>
     <div>
-        <form action="{{ route('search') }}" method="get">
+        <form action="{{ route('movie.search') }}" method="get">
             <div>
                 <label for="keyword">タイトル</label>
                 <input type="text" id="keyword" name="keyword" value="{{ $keyword ?? '' }}"  >

@@ -18,7 +18,7 @@
             </ul>
         </div>
     @endif
-    <form method="post" action="{{ route('store') }}">
+    <form method="post" action="{{ route('admin.store.movie') }}">
         @csrf
         <div>
             <label for="title">映画タイトル : </label>
@@ -34,7 +34,8 @@
             <textarea id="description" name="description"></textarea><br>
             <label for="genre">ジャンル : </label>
             <input type="text" id="genre" name="genre" /><br>
-            <button type="submit">Save</button>
+            <button type="submit">保存</button>
         </div>
     </form>
+    <a href="{{ url()->previous() }}">戻る</a>
 </body>

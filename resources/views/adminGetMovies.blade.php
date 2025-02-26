@@ -56,15 +56,15 @@
                     @endif
                     <td> {{ $movie->genre ? $movie->genre->name : '' }} </td>
                     <td>
-                        <a href="{{ route('edit', $movie->id) }}">
-                            <button>Edit</button>
+                        <a href="{{ route('admin.edit.movie', $movie->id) }}">
+                            <button>編集</button>
                         </a>
                     </td>
                     <td>
-                        <form method="post" action="{{ route('delete', $movie->id) }}" onsubmit="confirmDelete(event)">
+                        <form method="post" action="{{ route('admin.delete.movie', $movie->id) }}" onsubmit="confirmDelete(event)">
                             @csrf
                             @method('delete')
-                            <button>Delete</button>
+                            <button>削除</button>
                         </form>
                     </td>
                 </tr>

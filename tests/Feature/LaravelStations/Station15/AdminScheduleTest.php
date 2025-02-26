@@ -64,7 +64,7 @@ class AdminScheduleTest extends TestCase
     #[Group('station15')]
     public function test管理者映画スケジュール作成画面が表示されているか(): void
     {
-        $movieId = $this->createMovie('タイトル')->id;
+        $movieId = $this->createMovie(title: 'タイトル')->id;
         $response = $this->get('/admin/movies/' . $movieId . '/schedules/create');
         $response->assertStatus(200);
     }
