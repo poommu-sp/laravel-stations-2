@@ -60,7 +60,7 @@ class AdminMovieController extends Controller
 
     public function adminGetMovieDetail($id)
     {
-        $movie = Movie::with('genre')->find($id);
+        $movie = Movie::with('genre','schedules')->find($id);
         return view('adminGetMovieDetail', compact('movie'));
     } 
 

@@ -23,8 +23,9 @@
     @endif
 
     <h1>スケジュール編集</h1>
-    <form method="patch" action="{{ route('admin.update.schedule', $schedule->id) }}">
+    <form method="post" action="{{ route('admin.update.schedule', $schedule->id) }}">
         @csrf
+        @method('patch')
         <div>
             <label for="start_time_date">開始日付 : </label>
             <input type="date" id="start_time_date" name="start_time_date"

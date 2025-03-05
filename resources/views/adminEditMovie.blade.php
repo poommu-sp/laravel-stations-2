@@ -23,8 +23,9 @@
     @endif
 
     <h1>映画編集</h1>
-    <form method="patch" action="{{ route('admin.update.movie', $movie->id) }}">
+    <form method="post" action="{{ route('admin.update.movie', $movie->id) }}">
         @csrf
+        @method('patch')
         <div>
             <label for="title">映画タイトル : </label>
             <input type="text" id="title" name="title" value="{{ old('title', $movie->title) }}" /><br>

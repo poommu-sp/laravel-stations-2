@@ -15,8 +15,11 @@ class ScheduleFactory extends Factory
      */
     public function definition()
     {
+        // get random exists genre_id from genre
+        $movie = Movie::inRandomOrder()->first();
+
         return [
-            'movie_id' => Movie::factory(),
+            'movie_id' =>  $movie->id,
             'start_time' => CarbonImmutable::now(),
             'end_time' => CarbonImmutable::now()->addHours(2),
         ];

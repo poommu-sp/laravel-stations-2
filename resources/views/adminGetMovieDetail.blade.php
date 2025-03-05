@@ -34,6 +34,16 @@
         <label for="genre">ジャンル : </label>
         <p>{{ $movie->genre->name }}</p>
     </div>
-    
+    <div>
+        <label for="schedule">スケジュール一覧 : </label>
+        @foreach ($movie->schedules as $schedule)
+            <p>開始時刻: {{ $schedule->start_time }}</p>
+            <p>終了時刻: {{ $schedule->end_time }}</p>
+            <br>
+        @endforeach
+    </div>
+    <a href="{{ route('admin.create.schedule', $movie->id) }}">
+        スケジュール作成 |
+    </a>
     <a href="{{ route('admin.list.movie') }}">戻る</a>
 </body>

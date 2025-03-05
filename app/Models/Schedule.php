@@ -12,8 +12,8 @@ class Schedule extends Model
 
     // cast to Carbon instance
     protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
+        'start_time' => 'immutable_datetime',
+        'end_time' => 'immutable_datetime',
     ];
 
     use HasFactory;

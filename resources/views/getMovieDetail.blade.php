@@ -39,9 +39,6 @@
             </tbody>
         </table>
     </div>
-    <a href="{{ route('admin.create.schedule', $movie->id) }}">
-        スケジュール作成 |
-    </a>
     <a href="{{ url()->previous() }}">戻る</a>
 </body>
 

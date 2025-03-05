@@ -40,6 +40,7 @@
                 <th>概要</th>
                 <th>上映中かどうか</th>
                 <th>ジャンル</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -55,6 +56,11 @@
                         <td>上映予定</td>
                     @endif
                     <td> {{ $movie->genre ? $movie->genre->name : '' }} </td>
+                    <td>
+                        <a href="{{ route('admin.get.movie', $movie->id) }}">
+                            <button>詳細</button>
+                        </a>
+                    </td>
                     <td>
                         <a href="{{ route('admin.edit.movie', $movie->id) }}">
                             <button>編集</button>

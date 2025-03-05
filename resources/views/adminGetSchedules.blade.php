@@ -22,15 +22,15 @@
     <h1>スケジュール一覧</h1>
     @foreach ($movies as $movie)
         <h2>
-            <a href="{{ route('admin.get.movie', $schedule->movie->id) }}">
-                {{ $schedule->movie->title }} (ID: {{ $schedule->movie->id }})
+            <a href="{{ route('admin.get.movie', $movie->id) }}">
+                {{ $movie->title }} (ID: {{ $movie->id }})
             </a>
         </h2>
         <ul>
             @foreach ($movie->schedules as $schedule)
                 <li>
-                    開始時刻: {{ $schedule->start_time->format('Y-m-d H:i') }}
-                    終了時刻: {{ $schedule->end_time->format('Y-m-d H:i') }}
+                    開始時刻: {{ $schedule->start_time->format('Y-m-d H:i') }}  <br>
+                    終了時刻: {{ $schedule->end_time->format('Y-m-d H:i') }} <br>
                     <a href="{{ route('admin.get.schedule', $schedule->id) }}">詳細</a> |
                     <a href="{{ route('admin.edit.schedule', $schedule->id) }}">編集</a> |
                     <form action="{{ route('admin.delete.schedule', $schedule->id) }}" method="POST"

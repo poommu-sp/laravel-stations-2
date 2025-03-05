@@ -23,7 +23,7 @@ class MovieFactory extends Factory
             'published_year' => $this->faker->year,
             'description' => $this->faker->realText(20),
             'is_showing' => $this->faker->boolean,
-            'genre_id' => $genre->id,
+            'genre_id' => $genre->id
         ];
     }
 }
