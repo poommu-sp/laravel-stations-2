@@ -15,8 +15,21 @@ class ScheduleFactory extends Factory
      */
     public function definition()
     {
-        // get random exists genre_id from genre
-        $movie = Movie::inRandomOrder()->first();
+        // index for count current index of Movie
+        static $index = 0;
+
+        // get movie order by id from database 
+        $movie = Movie::orderBy('id')->skip($index)->first();
+
+        // if end of data then restart from first movie again
+        if (!$movie) {
+            $index = 0;
+            $movie = Movie::orderBy('id')->skip($index)->first();
+        }
+
+        // plus index every round to update to next movie data
+        $index++;
+
 
         return [
             'movie_id' =>  $movie->id,

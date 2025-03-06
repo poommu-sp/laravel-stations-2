@@ -16,10 +16,10 @@ class MovieFactory extends Factory
     {
         // get random exists genre_id from genre
         $genre = Genre::inRandomOrder()->first();
-
+        
         return [
             'title' => $this->faker->unique()->word,
-            'image_url' => $this->faker->imageUrl(640, 480, 'animals', true),
+            'image_url' => 'https://picsum.photos/640/480?random=' . rand(1, 1000),
             'published_year' => $this->faker->year,
             'description' => $this->faker->realText(20),
             'is_showing' => $this->faker->boolean,
