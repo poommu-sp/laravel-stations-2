@@ -18,6 +18,23 @@
     }
 </script>
 
+<style>
+    table {
+          width: 100%;
+          border-collapse: collapse;
+      }
+      th, td {
+          padding: 10px;
+          text-align: center;
+          vertical-align: middle;
+          border-bottom: 2px solid #ddd;
+      }
+      th {
+          border-left: none;
+          border-right: none;
+      }
+</style>
+
 <body>
     @if (session('success'))
         <div>{{ session('success') }}</div> <br>

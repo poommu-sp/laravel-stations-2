@@ -25,6 +25,7 @@ class AdminMovieController extends Controller
     public function adminStoreMovie(Request $request)
     {
         // validate 
+        // means title field is unique (not exist in table movies field title)
         $validated = $request->validate([
             'title' => 'required|unique:movies,title',
             'image_url' => 'required|url',
@@ -54,7 +55,7 @@ class AdminMovieController extends Controller
             return redirect()->route('admin.list.movie')->with('success', '保存しました');
         } catch (Exception $exception) {
             DB::rollback();
-            return redirect()->route('admin.list.movie')->withErrors($exception)->setStatusCode(500);
+            return redirect()->route('admin.list.movie')->withErrors($exception->getMessage())->setStatusCode(500);
         }
     }
 
@@ -73,6 +74,7 @@ class AdminMovieController extends Controller
     public function adminUpdateMovie(Request $request, $id)
     {
         $movie = Movie::findOrFail($id);
+        // means title is unique but ignore for current editing movie (check by id)
         $validated = $request->validate([
             'title' => 'required|unique:movies,title,' . $movie->id,
             'image_url' => 'required|url',
@@ -103,7 +105,7 @@ class AdminMovieController extends Controller
             return redirect()->route('admin.edit.movie', $movie->id)->with('success', '更新しました');
         } catch (Exception $exception) {
             DB::rollback();
-            return redirect()->route('admin.edit.movie')->withErrors($exception)->setStatusCode(500);
+            return redirect()->route('admin.edit.movie')->withErrors($exception->getMessage())->setStatusCode(500);
         }
     }
 

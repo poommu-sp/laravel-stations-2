@@ -29,7 +29,11 @@ Route::get('/getPractice', [PracticeController::class, 'getPractice']);
 
 // movies
 Route::get('/movies', [MovieController::class, 'getMovies'])->name('movie.search');
-Route::get('/movies/{id}',[MovieController::class, 'getMovieDetail']);
+Route::get('/movies/{id}',[MovieController::class, 'getMovieDetail'])->name('movie.detail');
+// reservation
+Route::get('/movies/{movie_id}/schedules/{schedule_id}/sheets', [MovieController::class, 'sheetReservation'])->name('sheet.reservation');
+Route::get('/movies/{movie_id}/schedules/{schedule_id}/reservations/create', [MovieController::class, 'createReservation'])->name('create.reservation');
+Route::post('/reservations/store', [MovieController::class, 'storeReservation'])->name('store.reservation');
 // sheets
 Route::get('/sheets',[SheetController::class, 'getSheets']); 
 // admin movies

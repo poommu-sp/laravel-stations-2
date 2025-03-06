@@ -12,4 +12,10 @@ class Sheet extends Model
 
     use HasFactory;
 
+    // has many reservation
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
 }

@@ -9,6 +9,18 @@
 </head>
 
 <body>
+    @if (session('success'))
+        <div>{{ session('success') }}</div> <br>
+    @endif
+    @if (session('errors'))
+        <div>
+            <ul>
+                @foreach (session('errors')->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <h1>映画詳細</h1>
     <div>
         <label for="title">映画タイトル : </label>
@@ -42,8 +54,14 @@
             <br>
         @endforeach
     </div>
+    <div>
     <a href="{{ route('admin.create.schedule', $movie->id) }}">
-        スケジュール作成 |
+        <button>スケジュール作成</button>
     </a>
-    <a href="{{ route('admin.list.movie') }}">戻る</a>
+    </div>
+    <div>
+    <a href="{{ route('admin.list.movie') }}">
+        <button>戻る</button>
+    </a>
+    </div>
 </body>

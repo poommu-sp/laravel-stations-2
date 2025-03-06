@@ -22,5 +22,11 @@ class Schedule extends Model
     {
         return $this->belongsTo(Movie::class);
     }
+
+    // has many reservation
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
     
 }
