@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateReservationRequest;
 use App\Models\Movie;
 use App\Models\Reservation;
 use App\Models\Schedule;
@@ -16,134 +17,104 @@ class MovieController extends Controller
 
     public function getMovies(Request $request)
     {
+        // retrieve request param
         $keyword = $request->input('keyword');
         $is_showing = $request->input('is_showing');
-
+        // start query builder
         $query = Movie::query();
         // Eager load 'genre' relationship
         $query->with('genre');
-
-        // check not null to add query filter for showing
+        // check is_showing is not null to add query filter is_showing
         if ($is_showing !== null) {
             $query->where('is_showing', $is_showing === "1" ? true : false);
         }
-        // check not null to add query filter title
+        // check not empty keyword to add query filter title & description
         if (!empty($keyword)) {
             $query->where('title', 'like', "%$keyword%")
                 ->orWhere('description', 'like', "%$keyword%");
         }
-
-        // if not match all condition that means show all (query with no filter)
-        // query with pagination
+        // query with pagination 20 per page
         $movies = $query->paginate(20);
-
         return view('getMovies', compact('movies', 'keyword', 'is_showing'));
     }
 
     public function getMovieDetail($id)
     {
         $movie = Movie::with(['schedules', 'genre'])->findOrFail($id);
-
         return view('getMovieDetail', compact('movie'));
     }
 
     public function sheetReservation($movie_id, $schedule_id, Request $request)
     {
-        // check query param date is exits
+        // check query param date is not exits
         if (!$request->has('date')) {
             abort(400, 'dateパラメータは必須です。');
         }
+        // get query param date
         $date = $request->query('date');
-
-        // get all seats
+        // get all seats group by row
         $sheets = Sheet::all()->groupBy('row');
-
-        // get reserved seats
+        // get all reserved seats in selected schedule_id & date
         $reservedSeats = Reservation::where('schedule_id', $schedule_id)
             ->where('date', $date)
-            // get only field sheet_id and parse to array
+            // get field sheet_id only and parse them to array
             ->pluck('sheet_id')->toArray();
-
         return view('sheetReservation', compact('movie_id', 'schedule_id', 'date', 'sheets', 'reservedSeats'));
     }
 
     public function createReservation($movie_id, $schedule_id, Request $request)
     {
-        // check query param date and sheetId is exits
+        // check query param date and sheetId is not exits
         if (!$request->has('date') || !$request->has('sheetId')) {
             abort(400, 'dateとsheet_idパラメータは必須です。');
         }
+        // get $sheet_id and $date from query param
         $sheet_id = $request->query('sheetId');
         $date = $request->query('date');
-
-        // parse date to Y-m-d format
+        // parse date to Carbon Y-m-d format 
         $date = Carbon::parse($date)->format('Y-m-d');
-
-        // check for existing reservation
+        // check for existing reservation in selected sheet_id & schedule_id & date
         $isReserved = Reservation::where('sheet_id',  $sheet_id)
             ->where('schedule_id', $schedule_id)
             ->where('date', $date)
             ->exists();
-        // if exist means already reserved then redirect with error
+        // if exist means already reserved then abort 400 with error
         if ($isReserved) {
             abort(400, 'この座席はすでに予約済みです。');
         }
-
         return view('createReservation', compact('movie_id', 'schedule_id', 'date', 'sheet_id'));
     }
 
-    public function storeReservation(Request $request)
+    public function storeReservation(CreateReservationRequest $request)
     {
-        // validate
-        // means schedule_id exists in schedules table column id
-        $validated = $request->validate([
-            'schedule_id' => 'required|exists:schedules,id',
-            'sheet_id' => 'required|exists:sheets,id',
-            'date' => 'required|date',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-        ]);
-
-        // parse date to Y-m-d format
-        $date = Carbon::parse($validated['date'])->format('Y-m-d');
-
-        // check for existing reservation
-        $isReserved = Reservation::where('sheet_id',  $validated['sheet_id'])
-            ->where('schedule_id', $validated['schedule_id'])
-            ->where('date', $date)
+        // request with validated data
+        $data = $request->validated();
+        // check for existing reservation in selected sheet_id & schedule_id & date
+        $isReserved = Reservation::where('sheet_id',  $data['sheed_id'])
+            ->where('schedule_id', $data['schedule_id'])
+            ->where('date', $data['date'])
             ->exists();
         // if exist means already reserved then redirect with error
         if ($isReserved) {
             return redirect()->back()->withErrors('この座席はすでに予約済みです。');
         }
-
-        // new reservation
+        // new reservation model
         $reservation = new Reservation();
-        $reservation->schedule_id = $validated['schedule_id'];
-        $reservation->sheet_id = $validated['sheet_id'];
-        $reservation->date = $date;
-        $reservation->email = $validated['email'];
-        $reservation->name = $validated['name'];
-        // default set is_canceled to false
+        $reservation->schedule_id = $data['schedule_id'];
+        $reservation->sheet_id = $data['sheet_id'];
+        $reservation->date = $data['date'];
+        $reservation->email = $data['email'];
+        $reservation->name = $data['name'];
+        // default hard set is_canceled to false
         $reservation->is_canceled = false;
-
-        // start transaction
-        DB::beginTransaction();
         try {
             // create reservation
             $reservation->save();
-            DB::commit();
-
-            // get movie_id from request
-            // use for redirect when success but can't use in test then skip
-            // $movie_id = $request->input('movie_id');
-
             // redirect with success message
             return redirect()->route('movie.search')
                 ->with('success', '予約が完了しました。');
-        } catch (Exception $exception) {
-            DB::rollback();
-            return redirect()->back()->withErrors($exception->getMessage())->setStatusCode(500);
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage())->setStatusCode(500);
         }
     }
 }

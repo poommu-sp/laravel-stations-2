@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateMovieRequest;
+use App\Http\Requests\UpdateMovieRequest;
 use App\Models\Genre;
 use App\Models\Movie;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class AdminMovieController extends Controller
 {
     public function adminGetMovies()
     {
-        $movies = Movie::with('genre')->get(); 
+        $movies = Movie::with('genre')->get();
         return view('adminGetMovies', compact('movies'));
     }
 
@@ -22,105 +23,83 @@ class AdminMovieController extends Controller
         return view('adminCreateMovie');
     }
 
-    public function adminStoreMovie(Request $request)
+    public function adminStoreMovie(CreateMovieRequest $request)
     {
-        // validate 
-        // means title field is unique (not exist in table movies field title)
-        $validated = $request->validate([
-            'title' => 'required|unique:movies,title',
-            'image_url' => 'required|url',
-            'published_year' => 'required|integer|min:1900|max:' . date('Y'),
-            'description' => 'required|string',
-            'is_showing' => 'required|nullable|boolean',
-            'genre' => 'required|string',
-        ]);
-        // movie part
+        // request with validated data
+        $data = $request->validated();
+        // prepare movie 
         $movie = new Movie();
-        $movie->title = $validated['title'];
-        $movie->image_url = $validated['image_url'];
-        $movie->published_year = $validated['published_year'];
-        $movie->is_showing = $request->has('is_showing') ? 1 : 0;;
-        $movie->description = $validated['description'];
-
-        // start transtion
+        $movie->title = $data['title'];
+        $movie->image_url = $data['image_url'];
+        $movie->published_year = $data['published_year'];
+        $movie->is_showing = $data['is_showing'];
+        $movie->description = $data['description'];
+        // start transaction
         DB::beginTransaction();
         try {
-            // create or update genre if exists
-            $genre = Genre::firstOrCreate(['name' => $validated['genre']]);
-            // add fk to model
+            // get or create genre if exists
+            $genre = Genre::firstOrCreate(['name' => $data['genre']]);
+            // add fk to movie model
             $movie->genre_id = $genre->id;
-            // save
+            // save to db
             $movie->save();
             DB::commit();
             return redirect()->route('admin.list.movie')->with('success', '保存しました');
-        } catch (Exception $exception) {
+        } catch (Exception $e) {
             DB::rollback();
-            return redirect()->route('admin.list.movie')->withErrors($exception->getMessage())->setStatusCode(500);
+            return redirect()->route('admin.list.movie')->withErrors($e->getMessage())->setStatusCode(500);
         }
     }
 
     public function adminGetMovieDetail($id)
     {
-        $movie = Movie::with('genre','schedules')->find($id);
+        $movie = Movie::with('genre', 'schedules')->findOrFail($id);
         return view('adminGetMovieDetail', compact('movie'));
-    } 
+    }
 
     public function adminEditMovie($id)
     {
-        $movie = Movie::with('genre')->find($id);
+        $movie = Movie::with('genre')->findOrFail($id);
         return view('adminEditMovie', compact('movie'));
     }
 
-    public function adminUpdateMovie(Request $request, $id)
+    public function adminUpdateMovie(UpdateMovieRequest $request, $id)
     {
+        // request with validated data
+        $data = $request->validated();
+        // check exists movie
         $movie = Movie::findOrFail($id);
-        // means title is unique but ignore for current editing movie (check by id)
-        $validated = $request->validate([
-            'title' => 'required|unique:movies,title,' . $movie->id,
-            'image_url' => 'required|url',
-            'published_year' => 'required|integer|min:1900|max:' . date('Y'),
-            'description' => 'required|string',
-            'is_showing' => 'required|nullable|boolean',
-            'genre' => 'required|string',
-        ]);
-        // set is showing
-        $is_showing = $request->has('is_showing') ? 1 : 0;
-        // start transtion
+        // start transaction
         DB::beginTransaction();
         try {
-            // genre part
-            // create or update genre if exists
-            $genre = Genre::firstOrCreate(['name' => $validated['genre']]);
-            // update movie
+            // get or create genre if exists
+            $genre = Genre::firstOrCreate(['name' => $data['genre']]);
+            // try to update movie
             $movie->update([
-                'title' =>  $validated['title'],
-                'image_url' => $validated['image_url'],
-                'published_year' => $validated['published_year'],
-                'is_showing' => $is_showing,
-                'description' => $validated['description'],
-                // add fk to model
+                'title' =>  $data['title'],
+                'image_url' => $data['image_url'],
+                'published_year' => $data['published_year'],
+                'is_showing' => $data['is_showing'],
+                'description' => $data['description'],
+                // set new fk to movie model
                 'genre_id' => $genre->id,
             ]);
             DB::commit();
-            return redirect()->route('admin.edit.movie', $movie->id)->with('success', '更新しました');
-        } catch (Exception $exception) {
+            return redirect()->route('admin.edit.movie', $id)->with('success', '更新しました');
+        } catch (Exception $e) {
             DB::rollback();
-            return redirect()->route('admin.edit.movie')->withErrors($exception->getMessage())->setStatusCode(500);
+            return redirect()->route('admin.edit.movie')->withErrors($e->getMessage())->setStatusCode(500);
         }
     }
 
     public function adminDeleteMovie($id)
     {
-        $movie = Movie::find($id);
-
-        if (!$movie) {
-            abort(404, '消しませんでした');
+        $movie = Movie::findOrFail($id);
+        try {
+            $movie->delete();
+            return redirect()->route('admin.list.movie')->with('success', '消しました');
+        } catch (Exception $e) {
+            return back()->withErrors('削除に失敗しました: ' . $e->getMessage())->setStatusCode(500);
         }
-
-        $movie->delete();
-
-        return redirect()->route('admin.list.movie')->with('success', '消しました');
     }
-
-    
 }

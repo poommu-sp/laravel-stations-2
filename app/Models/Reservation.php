@@ -16,7 +16,7 @@ class Reservation extends Model
     {
         return $this->belongsTo(Schedule::class);
     }
-    
+
     // has one sheet
     public function sheet()
     {

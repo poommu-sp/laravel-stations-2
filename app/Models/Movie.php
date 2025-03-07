@@ -11,14 +11,20 @@ class Movie extends Model
 
     use HasFactory;
 
+    protected $casts = [
+        // cast 0 & 1 from checkbox to boolean
+        'is_showing' => 'boolean',
+    ];
+
+    // has one genre
     public function genre()
     {
         return $this->belongsTo(Genre::class);
     }
 
+    // has many schedules
     public function schedules()
-{
-    return $this->hasMany(Schedule::class);
-}
-
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

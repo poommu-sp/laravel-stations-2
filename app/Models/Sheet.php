@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sheet extends Model
 {
 
-    protected $fillable = ['column','row'];
+    protected $fillable = ['column', 'row'];
 
     use HasFactory;
 
@@ -17,5 +17,4 @@ class Sheet extends Model
     {
         return $this->hasMany(Reservation::class);
     }
-
 }
