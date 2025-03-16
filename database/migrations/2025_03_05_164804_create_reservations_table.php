@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('schedule_id')->unique();
-            $table->unsignedBigInteger('sheet_id')->unique();
+            $table->unsignedBigInteger('schedule_id');
+            $table->unsignedBigInteger('sheet_id');
             $table->string('name');
             $table->string('email');
-            $table->date('date')->unique();
+            $table->date('date');
             $table->boolean('is_canceled')->default(false);
             $table->timestamps();
+            $table->unique(['schedule_id', 'sheet_id', 'date']);
             $table->foreign('schedule_id')->references('id')->on('schedules')->onDelete('cascade');
-            $table->foreign('sheet_id')->references('id')->on('sheets')->onDelete('cascade');;
+            $table->foreign('sheet_id')->references('id')->on('sheets')->onDelete('cascade');
         });
     }
 

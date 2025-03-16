@@ -18,6 +18,8 @@ return new class extends Migration
             $table->timestamps();
             $table->unsignedBigInteger('movie_id')->comment('列');
             $table->foreign('movie_id')->references('id')->on('movies')->onDelete('cascade');
+            $table->unsignedBigInteger('screen_id');
+            $table->foreign('screen_id')->references('id')->on('screens')->onDelete('cascade');
         });
     }
 

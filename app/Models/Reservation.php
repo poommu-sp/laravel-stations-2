@@ -9,9 +9,9 @@ class Reservation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['schedule_id', 'sheet_id', 'date', 'name', 'email', 'is_canceled'];
+    protected $fillable = ['user_id', 'schedule_id', 'sheet_id', 'date', 'name', 'email', 'is_canceled'];
 
-    // has one reservation
+    // has one schedule
     public function schedule()
     {
         return $this->belongsTo(Schedule::class);
@@ -22,4 +22,10 @@ class Reservation extends Model
     {
         return $this->belongsTo(Sheet::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

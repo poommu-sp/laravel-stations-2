@@ -22,7 +22,7 @@
     <h1>スケジュール一覧</h1>
     @foreach ($movies as $movie)
         <h2>
-            <a href="{{ route('admin.get.movie', $movie->id) }}">
+            <a href="{{ route('admin.movies.show', $movie->id) }}">
                 {{ $movie->title }} (ID: {{ $movie->id }})
             </a>
         </h2>

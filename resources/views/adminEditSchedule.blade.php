@@ -44,6 +44,17 @@
                 value="{{ $schedule->end_time->format('H:i') }}">
             <input type="hidden" name="movie_id" value="{{ $schedule->movie_id }}">
         </div>
+        <div>
+            <label for="screen_id">スクリーン</label>
+            <select name="screen_id" id="screen_id">
+                @foreach ($screens as $screen)
+                    <option value="{{ $screen->id }}" 
+                        {{ $screen->id == $reservation->screen_id ? 'selected' : '' }}>
+                        {{ $screen->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
         <button type="submit">更新</button>
     </form>
 

@@ -7,6 +7,8 @@ use App\Http\Requests\CreateScheduleRequest;
 use App\Http\Requests\UpdateScheduleRequest;
 use App\Models\Movie;
 use App\Models\Schedule;
+use App\Models\Screen;
+use Carbon\Carbon;
 use Exception;
 
 class AdminScheduleController extends Controller
@@ -27,21 +29,47 @@ class AdminScheduleController extends Controller
     public function adminEditSchedule($scheduleId)
     {
         $schedule = Schedule::findOrFail($scheduleId);
-        return view('adminEditSchedule', compact('schedule'));
+        $screens = Screen::all();
+        return view('adminEditSchedule', compact('schedule', 'screens'));
     }
 
-    // waiting for refactor with UpdateScheduleRequest //
     public function adminUpdateSchedule(UpdateScheduleRequest $request, $scheduleId)
     {
         // request with validated data
         $data = $request->validated();
+        // parse start_time & end_time to carbon for next step calculate
+        $startTime = Carbon::parse($data['start_time_date'] . ' ' . $data['start_time_time']);
+        $endTime = Carbon::parse($data['end_time_date'] . ' ' . $data['end_time_time']);
+        // check for throw error
+        // check start time & end time are same?
+        if ($startTime->equalTo($endTime)) {
+            return back()->withErrors([
+                'start_time_time' => '開始時刻と終了時刻を同じにすることはできません',
+                'end_time_time' => '開始時刻と終了時刻を同じにすることはできません'
+            ]);
+        }
+        // check start time is greater than end time?
+        if ($startTime->greaterThan($endTime)) {
+            return back()->withErrors([
+                'start_time_time' => '開始時刻は終了時刻より遅くなってはいけません',
+                'end_time_time' => '終了時刻は開始時刻より早くなってはいけません'
+            ]);
+        }
+        // check difference between start time & and end time <= 5 min?
+        if ($startTime->diffInMinutes($endTime) <= 5) {
+            return back()->withErrors([
+                'start_time_time' => '所要時間は最低でも5分でなければなりません',
+                'end_time_time' => '所要時間は最低でも5分でなければなりません'
+            ]);
+        }
         // check exists schedule
         $schedule = Schedule::findOrFail($scheduleId);
         // try to update
         try {
             $schedule->update([
-                'start_time' => $data['start_date_time'],
-                'end_time' => $data['end_date_time'],
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'screen_id' => $data['screen_id'],
             ]);
             return redirect()->route('admin.edit.schedule', $scheduleId)->with('success', '更新しました');
         } catch (Exception $e) {
@@ -63,23 +91,50 @@ class AdminScheduleController extends Controller
     public function adminCreateSchedule($id)
     {
         $movie = Movie::findOrFail($id);
-        return view('adminCreateSchedule', compact('movie'));
+        $screens = Screen::all();
+        return view('adminCreateSchedule', compact('movie', 'screens'));
     }
 
-    // use custom validate request 'CreateScheduleRequest' 
     public function adminStoreSchedule(CreateScheduleRequest $request)
     {
         // request with validated data
         $data = $request->validated();
+        // parse start_time & end_time to carbon for next step calculate
+        $startTime = Carbon::parse($data['start_time_date'] . ' ' . $data['start_time_time']);
+        $endTime = Carbon::parse($data['end_time_date'] . ' ' . $data['end_time_time']);
+        // check for throw error
+        // check start time & end time are same?
+        if ($startTime->equalTo($endTime)) {
+            return back()->withErrors([
+                'start_time_time' => '開始時刻と終了時刻を同じにすることはできません',
+                'end_time_time' => '開始時刻と終了時刻を同じにすることはできません'
+            ]);
+        }
+        // check start time is greater than end time?
+        if ($startTime->greaterThan($endTime)) {
+            return back()->withErrors([
+                'start_time_time' => '開始時刻は終了時刻より遅くなってはいけません',
+                'end_time_time' => '終了時刻は開始時刻より早くなってはいけません'
+            ]);
+        }
+        // check difference between start time & and end time <= 5 min?
+        if ($startTime->diffInMinutes($endTime) <= 5) {
+            return back()->withErrors([
+                'start_time_time' => '所要時間は最低でも5分でなければなりません',
+                'end_time_time' => '所要時間は最低でも5分でなければなりません'
+            ]);
+        }
         // schedule part
         $schedule = new Schedule();
-        $schedule->start_time = $data['start_date_time'];
-        $schedule->end_time = $data['end_date_time'];
+        $schedule->start_time = $startTime;
+        $schedule->end_time = $endTime;
         $schedule->movie_id = $data['movie_id'];
+        $schedule->screen_id = $data['screen_id'];
         // try to save
         try {
             $schedule->save();
-            return redirect()->route('admin.list.schedule')->with('success', '保存しました');
+            $movieId = $data['movie_id'];
+            return redirect()->route('admin.movies.show', $movieId)->with('success', '保存しました');
         } catch (Exception $e) {
             return redirect()->route('admin.list.schedule')->withErrors($e->getMessage())->setStatusCode(500);
         }

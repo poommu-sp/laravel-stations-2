@@ -74,7 +74,7 @@
                     @endif
                     <td> {{ $movie->genre ? $movie->genre->name : '' }} </td>
                     <td>
-                        <a href="{{ route('admin.get.movie', $movie->id) }}">
+                        <a href="{{ route('admin.movies.show', $movie->id) }}">
                             <button>詳細</button>
                         </a>
                     </td>

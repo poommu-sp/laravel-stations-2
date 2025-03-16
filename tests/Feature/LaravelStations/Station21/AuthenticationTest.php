@@ -27,7 +27,7 @@ class AuthenticationTest extends TestCase
         parent::setUp();
 
         // SheetTableSeederでシートを作成
-        $this->seed(\SheetTableSeeder::class);
+        $this->seed(\Database\Seeders\SheetTableSeeder::class);
 
         $genre = Genre::create(['name' => 'テストジャンル']);
         $screen = Screen::create(['name' => 'スクリーン1']);

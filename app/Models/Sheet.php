@@ -17,4 +17,5 @@ class Sheet extends Model
     {
         return $this->hasMany(Reservation::class);
     }
+
 }

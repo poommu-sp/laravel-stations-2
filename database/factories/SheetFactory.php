@@ -25,6 +25,7 @@ class SheetFactory extends Factory
         $currentSeatNumber++;
 
         return [
+            'id' => $currentSeatNumber,
             'row' => $availableRows[$rowIndex], 
             'column' => $seatColumn, 
         ];

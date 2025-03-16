@@ -25,20 +25,18 @@
     <form action="{{ route('store.reservation') }}" method="POST">
         @csrf
 
-         <!-- hidden param -->
+        <!-- hidden param -->
 
         <input type="hidden" name="movie_id" value="{{ $movie_id }}">
         <input type="hidden" name="schedule_id" value="{{ $schedule_id }}">
         <input type="hidden" name="sheet_id" value="{{ $sheet_id }}">
         <input type="hidden" name="date" value="{{ $date }}">
 
-         <!-- Email & name input with validation -->
+        <!-- Email & name input with validation -->
 
-        <label for="name">名前 :</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <label for="email">メール :</label>
-        <input type="email" id="email" name="email" required>
+        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+        <input type="hidden" name="name" value="{{ auth()->user()->name }}">
+        <input type="hidden" name="email" value="{{ auth()->user()->email }}">
 
         <button type="submit">予約</button>
     </form>

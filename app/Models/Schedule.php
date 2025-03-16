@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Schedule extends Model
 {
 
-    protected $fillable = ['movie_id','start_time','end_time'];
+    protected $fillable = ['movie_id','start_time','end_time', 'screen_id'];
 
     // cast to Carbon instance
     protected $casts = [
@@ -21,6 +21,11 @@ class Schedule extends Model
     public function movie()
     {
         return $this->belongsTo(Movie::class);
+    }
+
+    public function screen()
+    {
+        return $this->belongsTo(Screen::class);
     }
 
     // has many reservation

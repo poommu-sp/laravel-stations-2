@@ -28,7 +28,7 @@ class CreateMovieRequest extends FormRequest
             'image_url' => ['required', 'url'],
             'published_year' => ['required', 'integer', 'min:1900', 'max:' . date('Y')],
             'description' => ['required', 'string'],
-            'is_showing' => ['nullable', 'boolean'],
+            'is_showing' => ['required', 'boolean'],
             'genre' => ['required', 'string'],
         ];
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAdminReservationRequest extends FormRequest
 {
@@ -24,11 +25,11 @@ class UpdateAdminReservationRequest extends FormRequest
     public function rules()
     {
         return [
-            'movie_id' => ['required'],
-            'schedule_id' => ['required'],
-            'sheet_id' => ['required'],
-            'name' => ['required'],
-            'email' => ['required', 'email:strict,dns'],
+            'movie_id' => ['required', Rule::exists('movies', 'id')],
+            'schedule_id' => ['required', Rule::exists('schedules', 'id')],
+            'sheet_id' => ['required',  Rule::exists('sheets', 'id')],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email:strict,dns', 'max:255'],
         ];
     }
 }

@@ -35,6 +35,7 @@ class ScheduleFactory extends Factory
             'movie_id' =>  $movie->id,
             'start_time' => CarbonImmutable::now(),
             'end_time' => CarbonImmutable::now()->addHours(2),
+            'screen_id' => $this->faker->numberBetween(1, 3)
         ];
     }
 }
